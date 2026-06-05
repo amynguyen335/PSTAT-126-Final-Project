@@ -1,0 +1,133 @@
+---
+title: "PSTAT 126 Final Project"
+author: "Amy Nguyen (A244C16)"
+output: pdf_document
+date: "2026-06-04"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newpage
+# Part 1: Data Description and Descriptive Statistics
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(corrplot)
+```
+
+## 1: Select a Random Sample
+```{r}
+set.seed(1432)
+data(diamonds)
+diamond_sample <- diamonds %>% sample_n(5000)
+diamond_df <- data.frame(diamond_sample)
+```
+\newpage
+## 2: Describe the Variables
+### Summary of Data
+```{r}
+str(diamond_df)
+summary(diamond_df)
+```
+\newpage
+### Histograms of Continuous Variables
+```{r, fig.width=6, fig.height=4}
+hist(diamonds$carat, main='Histogram of Diamond Weight (Carat)', xlab='Weight (Carat)')
+```
+\
+Carat: The distribution of **`carat`** is right-skewed, with most diamonds being less than 1 carat. \
+```{r, fig.width=6, fig.height=4}
+hist(diamonds$depth, main='Histogram of Diamond Depth Percentage', xlab='Depth Percentage')
+```
+\
+Depth Percentage: The distribution of **`depth`** is roughly symmetric, with a central tendency around 61%.
+\newpage
+```{r, fig.width=6, fig.height=4}
+hist(diamonds$table, main='Histogram of Diamond Table Percentage', xlab='Table Percentage')
+```
+\
+Table Percentage: The distribution of **`table`** is roughly symmetric, with a central tendency around 58%. \
+```{r, fig.width=6, fig.height=4}
+hist(diamonds$price, main='Histogram of Diamond Price ($)', xlab='Price ($)')
+```
+\
+Price: The distribution of **`price`** is extremely right-skewed, with most diamonds being around 1000-2000 US dollars. 
+\newpage
+```{r, fig.width=6, fig.height=4}
+hist(diamonds$x, main='Histogram of Diamond Length x (mm)', xlab='Length x (mm)')
+```
+\
+Length: The distribution of **`x`** is slightly right-skewed, with most diamonds being around 4 mm long. \
+```{r, fig.width=6, fig.height=4}
+hist(diamonds$y, main='Histogram of Diamond Width y (mm)', xlab='Width y (mm)', breaks=30)
+```
+\
+Width: The distribution of **`y`** is slightly right-skewed, with most diamonds being around 4-5 mm wide.
+\newpage
+```{r, fig.width=6, fig.height=4}
+hist(diamonds$z, main='Histogram of Diamond Depth z (mm)', xlab='Depth z (mm)', breaks=30)
+```
+\
+Depth: The distribution of **`z`** is slightly right-skewed, with most diamonds being around 3-4 mm deep. \
+\newpage
+
+### Barplots of Categorical Variables
+```{r, fig.width=5, fig.height=3}
+ggplot(data=diamond_df, aes(x=cut)) +
+  geom_bar() +
+  labs(title='Barplot of Diamond Cut', x='Cut', y='Count') +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+\
+Cut: **`Ideal`** seems to be the most common cut of diamond, while **`Fair`** is the most rare. \
+```{r, fig.width=5, fig.height=3}
+ggplot(data=diamond_df, aes(x=color)) +
+  geom_bar() +
+  labs(title='Barplot of Diamond Color', x='Color', y='Count') +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+\
+Color: The distribution of **`color`** is roughly uniform, where **`G`** seems to be the most common color, which makes sense as it represents an average diamond color.
+\newpage
+```{r, fig.width=5, fig.height=3}
+ggplot(data=diamond_df, aes(x=clarity)) +
+  geom_bar() +
+  labs(title='Barplot of Diamond Clarity', x='Clarity', y='Count') +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+\
+Clarity: **`SI1`** (Slightly Included 1) and **`VS2`** (Very Slightly Included 2) are the most common grades of diamonds.
+\newpage
+
+## 3: Select 3 Quantitative and 2 Categorical Variables
+### Quantitive Variables: Carat, Depth, Table
+### Categorical Variables: Cut, Clarity
+```{r}
+vars <- diamond_df %>%
+  mutate(cut_int = as.integer(cut), clarity_int = as.integer(clarity)) %>%
+  select(carat, depth, table, cut_int, clarity_int)
+corr_matrix <- cor(vars)
+print(corr_matrix)
+```
+\
+```{r, fig.width=4, fig.height=4}
+corrplot(corr_matrix, method='color', type='upper', tl.col='black', addCoef.col = "green",
+         number.cex = 0.75,
+         title = "Correlation Matrix of Selected Variables",
+         mar = c(0, 0, 1, 0))
+```
+\
+The heatmap shows that **`table`** and **`cut`** have the strongest negative correlation (-0.43), with **`carat`** and **`clarity`** also having a moderate negative correlation (-0.36). There are weak positive correlations between **`cut`** and **`clarity`** (0.20), as well as **`carat`** and **`table`** (0.17). There are weak negative correlations between **`depth`** and **`table`** (-0.28), **`depth`** and **`cut`** (-0.24), and **`table`** and **`clarity`** (-0.16). The rest of the variables have very weak correlations with each other.
+\newpage
+
+## 4: Run Multiple Linear Regression Model
+```{r}
+mlr <- lm(price ~ carat + depth + table + cut + clarity, data=diamond_df)
+summary(mlr)
+```
+\newpage
+## 5: Observations
+It was interesting how the selected variables had mostly low correlations between each other. In particular, I was surprised that **`carat`** and **`depth`** were so lowly correlated (0.03), because I had originally thought that the weight of the diamond would have some dependency on the depth percentage. I am not surprised, though, that **`carat`** and **`clarity`** have a moderate negative correlation (-0.36) because the bigger the diamond, the more flaws (more inclusions, lower clarity) that it will have. 
