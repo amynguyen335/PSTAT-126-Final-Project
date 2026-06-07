@@ -360,7 +360,7 @@ The relationship between carat and log-price is strongly positive, confirming th
 \newpage
 # Part 3: Part II Continuation
 
-###Summary function
+### Summary function
 ```{r}
 summary(model5)
 ```
@@ -373,7 +373,7 @@ We see how at first the `table` predictor's p-value was very large at 0.47818 wh
 
 In analyzing the summary in itself, we see that the that the RSE is 0.3685 which signifies that the typical prediction errors are around .3685 units of the response variable. The R-squared value of 0.8682 also means that 86.8% of the variability in the log prices are explained by the predictors showing that linear regression is a good fit. The fact that it is very similar to the Adjusted R-Squared values signify that all the predictors are useful in contributing to the R-squared value. Carat also has the largest value at 2.0938 which indicates that while holding other variables fixed, as you increase carat by 1, the log price increases by a value of 2.094. Depth also plays a role in log price change, but very small at a value of -.012536. The cut and clarity of the diamonds also play a large role in predicting log price. Looking at the data we see that the price change expresses a Linear Trend and Cubic trend across the different cut levels, while for quadratic and fourth-order component their p-values are relatively higher indicating that they ar not as significant. As we analyze the clarity, it is clear linear trend is the strongest effect indicating that the greater the clarity is associated with higher predicted values of log price. However, the negative component on quadratic component also suggests that it is not perfectly linear and thus bends in some way.
 
-###Detect multicollinearity
+### Detect multicollinearity
 
 ```{r}
 library(car)
@@ -410,7 +410,7 @@ Confidence interval: We are 95% confident that the true population average price
 Prediction interval: We are 95% confidence that a single specific future diamond matches the descriptions as the one we used is between 1883.35 to 7993.784.
 
 
-###Summary of Report
+### Summary of Report
 
 Through transforming our Simple Linear Regression to a log-transformed Multi-Linear Regression, we were able to account for the heteroscedasticity and the non-linear patterns that we observed through the inital model analysis. We thereby retained our linear model assumptions and could perform the linear regression test. Through using backward elimination of AIC we were also able to get rid of the non-significant `table` metric. With this we retained `carat`, `depth`, `cut`, and `clarity`, finishing with an adjusted R-squared value of 0.8678. We checked for multicollinearity issues to using the VIF diagnostic, and determined that we can safely use the predictive measures of linear regression with worrying about variance inflation due to confounding factors. Through transforming the log-linear back to standard dollar after, you can make calculate a reliable framework for appraising diamond values.
 
